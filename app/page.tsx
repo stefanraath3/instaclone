@@ -1,10 +1,23 @@
-import Feed from "@/components/feed/feed";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getSession } from "@/lib/supabase/client";
 
 export default function Home() {
-  return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Instagram Clone</h1>
-      <Feed />
-    </main>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    async function checkAuth() {
+      const { data } = await getSession();
+      if (data.session) {
+        router.push("/feed");
+      } else {
+        router.push("/login");
+      }
+    }
+    checkAuth();
+  }, [router]);
+
+  return <div>Loading...</div>;
 }
