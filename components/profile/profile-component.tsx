@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Grid, List } from "lucide-react";
+import { signOut } from "@/lib/supabase/client";
 
 type UserProfile = {
   username: string;
@@ -28,6 +30,17 @@ export default function ProfileComponent() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (!error) {
+      router.push("/login");
+    } else {
+      console.error("Error signing out:", error);
+    }
+  };
+
   useEffect(() => {
     // Fetch user profile data (to be implemented with real API later)
     const mockProfile: UserProfile = {
@@ -45,14 +58,14 @@ export default function ProfileComponent() {
       {
         id: "1",
         username: "johndoe",
-        imageUrl: "https://picsum.photos/500/500?random=1",
+        imageUrl: "https://picsum.photos/1080/1080?random=1",
         caption: "Beautiful sunset!",
         likes: 89,
       },
       {
         id: "2",
         username: "johndoe",
-        imageUrl: "https://picsum.photos/500/500?random=2",
+        imageUrl: "https://picsum.photos/1080/1080?random=2",
         caption: "City lights",
         likes: 56,
       },
@@ -91,7 +104,12 @@ export default function ProfileComponent() {
               <strong>{profile.followingCount}</strong> following
             </span>
           </div>
-          <Button>Edit Profile</Button>
+          <div className="flex space-x-4">
+            <Button>Edit Profile</Button>
+            <Button variant="outline" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
         </div>
       </div>
       <div className="mb-4 flex justify-end">

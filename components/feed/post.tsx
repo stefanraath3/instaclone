@@ -8,23 +8,19 @@ type PostProps = {
   post: {
     id: string;
     username: string;
+    userAvatarUrl: string | null;
     imageUrl: string;
     caption: string;
-    likes: number;
+    createdAt: string;
   };
 };
 
 export default function Post({ post }: PostProps) {
-  const [likes, setLikes] = useState(post.likes);
   const [liked, setLiked] = useState(false);
 
   const handleLike = () => {
-    if (liked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
-    }
     setLiked(!liked);
+    // TODO: Implement like functionality with API
   };
 
   return (
@@ -35,7 +31,11 @@ export default function Post({ post }: PostProps) {
     >
       <div className="p-4 flex items-center">
         <Avatar className="h-10 w-10 mr-3">
-          <AvatarImage src={`https://avatar.vercel.sh/${post.username}`} />
+          <AvatarImage
+            src={
+              post.userAvatarUrl || `https://avatar.vercel.sh/${post.username}`
+            }
+          />
           <AvatarFallback>{post.username[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <span className="font-semibold">{post.username}</span>
@@ -63,10 +63,12 @@ export default function Post({ post }: PostProps) {
             <Bookmark className="h-6 w-6" />
           </Button>
         </div>
-        <span className="font-semibold block mb-2">{likes} likes</span>
         <p>
           <span className="font-semibold mr-2">{post.username}</span>
           {post.caption}
+        </p>
+        <p className="text-gray-500 text-sm mt-1">
+          {new Date(post.createdAt).toLocaleDateString()}
         </p>
       </div>
     </motion.div>
